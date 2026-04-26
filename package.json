@@ -1,0 +1,30 @@
+{
+  "name": "rumo",
+  "version": "0.0.1-alpha",
+  "description": "SaaS de Gestão de Instrutores e Aulas",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install": "npm install --workspaces",
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "db:migrate": "npm run migrate -w backend",
+    "db:seed": "npm run seed -w backend"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "Patrick",
+  "license": "MIT"
+}
