@@ -1,0 +1,172 @@
+/* ============================================================
+   RUMO — Design Tokens
+   Editorial moderno · Mobile-first · High-contrast operacional
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ---------- Brand Core (do brand kit) ---------- */
+  --asfalto:    #101418;   /* Estrutura, tipografia primária */
+  --lima:       #B7F500;   /* Sinal lima — ação e destaque */
+  --concreto:   #F4F5F2;   /* Fundo limpo */
+  --rota:       #2D6BFF;   /* Links e suporte */
+
+  /* ---------- Asfalto Scale (neutros) ----------
+     Construída em torno de #101418 (asfalto = 950)
+     Tom levemente azul-frio, simulando concreto+asfalto */
+  --asfalto-50:  #F7F8F6;
+  --asfalto-100: #ECEEEA;   /* concreto claro */
+  --asfalto-200: #DADDD6;
+  --asfalto-300: #B8BCB4;
+  --asfalto-400: #898E87;
+  --asfalto-500: #5C6159;
+  --asfalto-600: #3D423B;
+  --asfalto-700: #272B26;
+  --asfalto-800: #1A1E1A;
+  --asfalto-900: #14171A;
+  --asfalto-950: #101418;   /* asfalto base */
+
+  /* ---------- Lima Scale ----------
+     Lima base = 500. Para usos sutis e estados. */
+  --lima-50:  #F4FCD9;
+  --lima-100: #E9F9B3;
+  --lima-200: #D7F37A;
+  --lima-300: #C5EE4A;
+  --lima-400: #B7F500;     /* base — sinal lima */
+  --lima-500: #A6E000;     /* hover/pressed */
+  --lima-600: #8AB800;
+  --lima-700: #6B8F00;
+  --lima-800: #4D6700;
+  --lima-900: #344600;
+
+  /* ---------- Rota Scale (azul de suporte) ---------- */
+  --rota-50:  #EAF1FF;
+  --rota-100: #D5E3FF;
+  --rota-200: #ABC7FF;
+  --rota-300: #80AAFF;
+  --rota-400: #568EFF;
+  --rota-500: #2D6BFF;     /* base */
+  --rota-600: #1E54D6;
+  --rota-700: #163FA3;
+  --rota-800: #0F2B70;
+  --rota-900: #08183D;
+
+  /* ---------- Semânticas ----------
+     Inspiração: sinalização viária. */
+  --success:        #00A86B;   /* verde-sinal mais saturado que lima */
+  --success-bg:     #E0F5EC;
+  --warning:        #FFB020;   /* amarelo placa de advertência */
+  --warning-bg:     #FFF1D6;
+  --danger:         #E5484D;   /* vermelho pare */
+  --danger-bg:      #FCE7E7;
+  --info:           var(--rota-500);
+  --info-bg:        var(--rota-50);
+
+  /* Status do produto (mapeados explicitamente) */
+  --status-pendente-fg:    #8A6100;
+  --status-pendente-bg:    #FFF1D6;
+  --status-pago-fg:        #00713F;
+  --status-pago-bg:        #DDF3E6;
+  --status-confirmado-fg:  var(--asfalto-950);
+  --status-confirmado-bg:  var(--lima-400);
+  --status-cancelado-fg:   #8B1F22;
+  --status-cancelado-bg:   #FCE0E1;
+
+  /* ---------- Tipografia ---------- */
+  --font-display: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --font-body:    'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* Escala tipográfica (mobile-first; números em rem assumindo 16px) */
+  --fs-3xs:  0.6875rem;  /* 11 — micro labels */
+  --fs-2xs:  0.75rem;    /* 12 — caption */
+  --fs-xs:   0.8125rem;  /* 13 — overline */
+  --fs-sm:   0.875rem;   /* 14 — body small */
+  --fs-md:   1rem;       /* 16 — body */
+  --fs-lg:   1.125rem;   /* 18 — body emphasis */
+  --fs-xl:   1.375rem;   /* 22 — h5 */
+  --fs-2xl:  1.75rem;    /* 28 — h4 */
+  --fs-3xl:  2.25rem;    /* 36 — h3 */
+  --fs-4xl:  3rem;       /* 48 — h2 */
+  --fs-5xl:  4.5rem;     /* 72 — h1 */
+  --fs-6xl:  7rem;       /* 112 — display */
+  --fs-7xl:  11rem;      /* 176 — editorial mega */
+
+  --lh-tight:   0.92;
+  --lh-snug:    1.05;
+  --lh-normal:  1.25;
+  --lh-relaxed: 1.5;
+
+  --tr-tight:   -0.04em;
+  --tr-snug:    -0.02em;
+  --tr-normal:   0em;
+  --tr-wide:    0.04em;
+  --tr-mega:    -0.05em;
+
+  /* ---------- Espaçamento (4px base) ---------- */
+  --sp-0:  0;
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sp-24: 96px;
+  --sp-32: 128px;
+
+  /* ---------- Raios ---------- */
+  --r-none: 0;
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   20px;
+  --r-2xl:  24px;
+  --r-pill: 999px;
+
+  /* ---------- Sombras ---------- */
+  --sh-xs: 0 1px 2px rgba(16, 20, 24, 0.06);
+  --sh-sm: 0 2px 6px rgba(16, 20, 24, 0.08);
+  --sh-md: 0 6px 16px rgba(16, 20, 24, 0.10);
+  --sh-lg: 0 14px 32px rgba(16, 20, 24, 0.14);
+  --sh-xl: 0 24px 56px rgba(16, 20, 24, 0.20);
+  --sh-focus: 0 0 0 3px rgba(183, 245, 0, 0.45);
+
+  /* ---------- Hit targets (mobile) ---------- */
+  --hit-min:    44px;
+  --hit-cozy:   48px;
+  --hit-large:  56px;
+
+  /* ---------- Motion ---------- */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:    140ms;
+  --dur-base:    220ms;
+  --dur-slow:    360ms;
+
+  /* ---------- Breakpoints (referência) ---------- */
+  --bp-sm: 360px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+
+  /* ---------- Aliases semânticos ---------- */
+  --bg-app:        var(--concreto);
+  --bg-surface:    #FFFFFF;
+  --bg-elevated:   #FFFFFF;
+  --bg-inverse:    var(--asfalto-950);
+  --fg-primary:    var(--asfalto-950);
+  --fg-secondary:  var(--asfalto-600);
+  --fg-tertiary:   var(--asfalto-400);
+  --fg-on-inverse: var(--concreto);
+  --fg-on-accent:  var(--asfalto-950);
+  --border-subtle: var(--asfalto-200);
+  --border-strong: var(--asfalto-300);
+  --border-inverse:var(--asfalto-800);
+}
