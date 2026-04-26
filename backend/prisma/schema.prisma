@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Academy {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  plan      String   @default("starter")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  instructors Instructor[]
+  classes     Class[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  RECEPTIONIST
+  INSTRUCTOR
+}
+
+model User {
+  id        String   @id @default(cuid())
+  academyId String
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(INSTRUCTOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  academy       Academy        @relation(fields: [academyId], references: [id])
+  refreshTokens RefreshToken[]
+  notifications Notification[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum InstructorStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+}
+
+model Instructor {
+  id          String           @id @default(cuid())
+  academyId   String
+  name        String
+  email       String
+  phone       String?
+  specialties String[]
+  status      InstructorStatus @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  academy Academy @relation(fields: [academyId], references: [id])
+  classes Class[]
+}
+
+enum ClassStatus {
+  DRAFT
+  CONFIRMED
+  CANCELLED
+}
+
+model Class {
+  id           String      @id @default(cuid())
+  academyId    String
+  instructorId String?
+  name         String
+  specialty    String
+  date         DateTime
+  startTime    String
+  endTime      String
+  room         String?
+  capacity     Int
+  status       ClassStatus @default(DRAFT)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  academy    Academy     @relation(fields: [academyId], references: [id])
+  instructor Instructor? @relation(fields: [instructorId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
