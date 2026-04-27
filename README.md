@@ -1,65 +1,15 @@
-# Rumo – SaaS de Gestão de Instrutores
+# Rumo
 
-Plataforma moderna para gerenciar instrutores, aulas, alunos e performance em tempo real.
+**Sistema Operacional do Instrutor** — SaaS B2B mobile-first para instrutores autônomos de trânsito no Brasil.
 
-## 📋 Status do Projeto
-
-**Fase:** MVP em desenvolvimento  
-**Data de início:** Abril 2026  
-**Stack:** A ser definida pelo Claude Code
-
-## 🎯 Funcionalidades Principais (MVP)
-
-### Gestão de Instrutores
-- Cadastro e perfil do instrutor
-- Histórico de aulas e performance
-- Agendamento de disponibilidade
-
-### Gestão de Aulas
-- Criar e agendamento de aulas
-- Atribuição de instrutores a aulas
-- Lista de presença/alunos inscritos
-
-### Dashboard
-- Overview de instrutores ativos
-- Aulas do dia/semana
-- Alunos e taxas de ocupação
-
-## 📁 Estrutura do Projeto
-rumo/
-├── docs/
-│   ├── CLAUDE.md
-│   ├── PRODUCT.md
-│   ├── API.md
-│   └── ROADMAP.md
-├── backend/
-├── frontend/
-├── .gitignore
-├── package.json
-└── README.md
-
-## 🚀 Quick Start
-
-### Pré-requisitos
-- Node.js 18+
-- npm ou yarn
-- Git
-
-### Instalação
-
-```bash
-git clone https://github.com/patrickmartinsf-web/rumo.git
-cd rumo
-npm install
-npm run dev
-```
-
-## 📚 Documentação
-
-- **CLAUDE.md** – Padrões de código e instruções para Claude Code
-- **PRODUCT.md** – Especificação funcional completa do MVP
-- **ROADMAP.md** – Prioridades pós-MVP e backlog
+> *"Do caderno ao negócio de verdade."*
 
 ---
 
-**Last Updated:** Abril 2026
+## Documentação
+
+A fonte única de verdade do projeto está em **[`docs/CONTEXT.md`](docs/CONTEXT.md)** — leia antes de qualquer tarefa de desenvolvimento. Cobre negócio, usuário, produto, arquitetura técnica (Next.js + Supabase + Vercel + Z-API + Stripe), identidade visual e instruções para Claude Code.
+
+## Status
+
+Em validação com instrutores. Stack ainda não scaffolded — próximo passo é montar o projeto Next.js conforme `docs/CONTEXT.md` §4.
