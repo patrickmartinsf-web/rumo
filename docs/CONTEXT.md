@@ -155,14 +155,16 @@ Fase 3 — Gamificação: Criar hábito (streak, metas, progresso do aluno)
 
 ### Paleta de cores
 
+A fonte canônica é `frontend/design-system/tokens.css` (escalas 50–950 + semânticas + status). Resumo das cores-mãe:
+
 | Nome | Hex | Uso |
 |---|---|---|
-| Asfalto | `#0F1113` | Background principal (dark mode), textos sobre fundo claro |
-| Verde Sinal | `#C6FF00` | Cor de ação primária — botões CTA, highlights, links |
-| Petróleo | `#0D3B38` | Cor secundária — cards, seções de destaque |
-| Concreto | `#6B7075` | Textos secundários, placeholders |
-| Névoa | `#E6E8EA` | Backgrounds secundários (light mode) |
-| Branco | `#FFFFFF` | Textos sobre fundo escuro |
+| Asfalto | `#101418` | Background dark mode, textos primários sobre fundo claro |
+| Sinal Lima | `#B7F500` | Cor de ação primária — CTAs, highlights, destaques |
+| Concreto | `#F4F5F2` | Background light mode, textos sobre fundo escuro |
+| Rota Azul | `#2D6BFF` | Links e cor de suporte |
+
+Status do produto (chips/badges): Pendente, Pago, Confirmado, Cancelado — pares fg/bg dedicados no DS. Semânticas (success/warning/danger/info) e escalas completas (Asfalto, Lima, Rota) também em `tokens.css`.
 
 ### Tipografia
 - **Fonte principal:** Bricolage Grotesque (Google Fonts)
@@ -190,7 +192,9 @@ Label:    500,     12–14px  → Botões e tags
 - ❌ "Otimize sua gestão com automações inteligentes."
 
 ### Dark mode
-O produto é usado dentro do carro, ao sol e à noite. **Dark mode é o modo padrão.** O Verde Sinal (#C6FF00) é a cor de ação primária — botões, CTAs, links ativos.
+O produto é usado dentro do carro, ao sol e à noite. **Dark mode é o modo padrão.** O Sinal Lima (`#B7F500`) é a cor de ação primária — botões, CTAs, links ativos.
+
+> Nota: o DS shippado em `frontend/design-system/` está em light-first (decisão original do handoff de design pelo uso ao sol). Os tokens dark precisam ser adicionados ao DS antes do scaffold do app.
 
 ---
 
@@ -224,7 +228,7 @@ O produto é usado dentro do carro, ao sol e à noite. **Dark mode é o modo pad
 
 ### Como trabalhar neste projeto
 1. **Sempre mobile-first** — qualquer componente deve funcionar em 390px antes de qualquer outra resolução
-2. **Dark mode por padrão** — usar `#0F1113` como background base, `#C6FF00` para ações primárias
+2. **Dark mode por padrão** — usar Asfalto `#101418` como background base, Sinal Lima `#B7F500` para ações primárias (tokens em `frontend/design-system/tokens.css`)
 3. **Bricolage Grotesque** em toda tipografia — nunca usar outra fonte sem autorização explícita
 4. **Português** em todos os textos de interface, comentários de código e mensagens de erro
 5. **Não inventar regras de negócio** — quando algo não estiver definido neste documento, perguntar antes de implementar
