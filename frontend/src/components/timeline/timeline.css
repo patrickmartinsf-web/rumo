@@ -1,0 +1,405 @@
+/* ==========================================================================
+   TRILHA + BLOCO
+   §1 (5 regiões), §2 (canais de cor), §3 (escada de densidade), §5 (motion).
+   Zero hex neste arquivo: tudo vem de tokens.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Trilha
+   -------------------------------------------------------------------------- */
+
+.track {
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0 0 12px;
+}
+
+.track__ruler {
+  position: relative;
+  height: 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.track__tick {
+  position: absolute;
+  top: 8px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.track__tick[data-hour] {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.track__grid {
+  position: relative;
+  padding: 0 0 4px;
+}
+
+.track__gridline {
+  position: absolute;
+  inset-block: 0;
+  width: 1px;
+  background: var(--border);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* A agulha usa TINTA, não uma cor nova.
+   §2 é sobre não gastar cor à toa: a agulha é estrutura da trilha, não um
+   estado de interatividade, então herda --text-primary e se distingue por
+   forma (linha fina + cabeça triangular). */
+.track__agulha {
+  position: absolute;
+  inset-block: -4px 0;
+  width: 2px;
+  background: var(--text-primary);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.track__agulha::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--text-primary);
+}
+
+.track__lane {
+  position: relative;
+  height: 44px; /* §6: a faixa de toque da lane não desce do piso de 44px */
+}
+
+/* --------------------------------------------------------------------------
+   Bloco — container = camada 0 (sinal de estado)
+   -------------------------------------------------------------------------- */
+
+.tlb {
+  position: absolute;
+  top: 4px;
+  height: 36px;
+  min-width: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--dur-block-hover) var(--ease-emphasis);
+}
+
+.tlb:hover {
+  transform: translateY(-2px);
+}
+
+.tlb:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  z-index: 3;
+}
+
+.tlb[data-open] {
+  z-index: 3;
+}
+
+.tlb[data-pinned] {
+  box-shadow: 0 0 0 2px var(--border-focus);
+}
+
+/* Estouro: o bloco foi cortado pela borda da vista. Quadra o canto e marca
+   com um degradê, para não parecer que a interatividade termina ali. */
+.tlb[data-clip-start] {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-inline-start: 2px dotted var(--border-strong);
+}
+
+.tlb[data-clip-end] {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-inline-end: 2px dotted var(--border-strong);
+}
+
+/* ---- §2, tabela "Estados → tratamento do container" --------------------- */
+
+.tlb[data-state='rascunho'] {
+  background: var(--state-draft-fill);
+  border-color: var(--border);
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.tlb[data-state='agendada'] {
+  background: var(--state-scheduled-fill);
+  border-color: var(--border-strong);
+}
+
+.tlb[data-state='no-ar'] {
+  background: var(--state-live);
+  border-color: var(--state-live-edge);
+  color: var(--text-on-live);
+}
+
+.tlb[data-state='encerrada'] {
+  background: var(--state-ended-fill);
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.tlb[data-state='erro'] {
+  background: var(--bg-danger);
+  border-color: var(--border-danger);
+  color: var(--text-danger);
+}
+
+/* Replicada: "igual base + badge de contador + link visual entre instâncias".
+   O link é o realce recíproco — abrir uma replicada marca as irmãs. */
+.tlb[data-linked] {
+  box-shadow: 0 0 0 2px var(--border-strong);
+}
+
+/* ---- Região 1 — Âncora -------------------------------------------------- */
+
+.tlb__ancora {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0; /* deixa o título encolher até o ellipsis */
+  flex: 1 1 auto;
+}
+
+.tlb__tipo {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.tlb__titulo {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tlb__replica {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 5px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  opacity: 0.8;
+}
+
+/* Dot de sinal — §6: FORMA muda junto com a cor.
+   rascunho=anel tracejado · agendada=anel · no ar=disco · encerrada=traço ·
+   erro=triângulo. Cada estado é reconhecível em escala de cinza. */
+.tlb__dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tlb__dot[data-state='rascunho'] {
+  background: transparent;
+  border: 1.5px dashed currentColor;
+}
+
+.tlb__dot[data-state='agendada'] {
+  background: transparent;
+  border: 2px solid currentColor;
+}
+
+.tlb__dot[data-state='encerrada'] {
+  border-radius: 1px;
+  height: 3px;
+  width: 10px;
+}
+
+.tlb__dot[data-state='erro'] {
+  border-radius: 0;
+  width: 10px;
+  height: 9px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+/* ---- Região 2 — Extensão (resumo textual; a largura é o dado) ----------- */
+
+.tlb__janela {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* ---- Região 3 — Escopo -------------------------------------------------- */
+
+.tlb__escopo {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.tlb__escopo--contador {
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ---- Região 4 — Adornos ------------------------------------------------- */
+
+.tlb__adornos {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.tlb__adorno {
+  display: inline-flex;
+  opacity: 0.85;
+}
+
+.tlb__adorno[data-kind='alerta'] {
+  color: var(--text-danger);
+  opacity: 1;
+}
+
+.tlb__adorno-contador {
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+/* ---- Região 5 — Ação ---------------------------------------------------- */
+
+.tlb__acao {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tlb__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--dur-block-hover) var(--ease-emphasis);
+}
+
+.tlb__btn--icon {
+  padding: 0;
+  width: 24px;
+  justify-content: center;
+  border-color: transparent;
+}
+
+/* §6, touch target ≥44px: a caixa visual continua 24px (é o que cabe num
+   bloco de 36px), mas a área de PONTEIRO é expandida por pseudo-elemento.
+   Esse é o jeito de passar no piso de 44px sem inchar o layout. */
+.tlb__btn::after {
+  content: '';
+  position: absolute;
+  inset: 50% 50%;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  transform: translate(-50%, -50%);
+}
+
+.tlb__btn:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.tlb__btn:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-press);
+}
+
+.tlb__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tlb__btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 1px;
+}
+
+/* ---- Canal PROGRESSO (§2) — barra dedicada, nunca a lima ---------------- */
+
+.tlb__progresso {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--progress-track);
+}
+
+.tlb__progresso-fill {
+  display: block;
+  height: 100%;
+  background: var(--progress-fill);
+  transition: width var(--dur-progress) var(--ease-emphasis) 120ms;
+}
+
+/* ---- §3, degraus estreitos --------------------------------------------- */
+
+.tlb[data-tier='icon'],
+.tlb[data-tier='bar'] {
+  justify-content: center;
+  padding: 0 4px;
+  gap: 4px;
+}
+
+.tlb[data-tier='bar'] {
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   §5 — prefers-reduced-motion: estado muda, movimento não acontece.
+   Zerar duração não basta para transform: some com o transform também.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .tlb:hover,
+  .tlb__btn:active {
+    transform: none;
+  }
+}

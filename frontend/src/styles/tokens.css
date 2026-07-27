@@ -1,0 +1,180 @@
+/*
+ * CDS tokens — Timeline Orchestra
+ * ----------------------------------------------------------------------------
+ * Regra do doc (§ "Notas de tokens"): nunca hex fixo no componente. Todo hex
+ * mora aqui e só aqui, para que dark mode seja uma troca de valores.
+ *
+ * § 2 é o motivo desta lista existir: cada CANAL tem um PORTADOR próprio.
+ *   tipo      -> forma (glifo)         -> nenhum token de cor
+ *   estado    -> container             -> --state-*
+ *   progresso -> barra dedicada        -> --progress-*   (tonalidade distinta)
+ *   ação      -> botão                 -> --action-*     (neutro, peso != cor)
+ *
+ * A lima NÃO é accent genérico. Ela é `--state-live` e só isso. Se algum dia
+ * precisar de accent, use --bg-accent/--text-accent, que são outra família.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Superfícies */
+  --surface-0: #ffffff;
+  --surface-1: #f4f6f2;
+  --surface-2: #e8ebe3;
+
+  /* Texto
+   * --text-secondary foi escurecido de propósito: o cinza-oliva anterior
+   * reprovava AA (§6). Os valores abaixo passam 4.5:1 sobre --surface-0..2. */
+  --text-primary: #16190f; /* 17.4:1 sobre surface-0 */
+  --text-secondary: #4a5142; /* 7.9:1 sobre surface-0, 7.1:1 sobre surface-2 */
+  --text-muted: #5d6455; /* 5.9:1 sobre surface-0, 5.3:1 sobre surface-2 */
+  --text-on-live: #1a2000; /* sobre --state-live */
+
+  /* Bordas */
+  --border: #ccd2c3;
+  --border-strong: #97a08c;
+  --border-danger: #b4321f;
+  --border-focus: #1c5fd6;
+
+  /* Semânticos */
+  --bg-danger: #fdecea;
+  --text-danger: #9c2a19; /* 6.6:1 sobre --bg-danger */
+  --bg-accent: #e8f0fd;
+  --text-accent: #1a4fa8;
+
+  /* CANAL ESTADO — dono exclusivo da lima sólida (§2) */
+  --state-live: #c3e021;
+  --state-live-edge: #a3bd0f;
+  --state-draft-fill: var(--surface-2);
+  --state-scheduled-fill: var(--surface-2);
+  --state-ended-fill: #dfe2da;
+
+  /* CANAL PROGRESSO — tonalidade deliberadamente distinta da lima,
+   * legível tanto sobre a lima ("no ar") quanto sobre superfícies neutras. */
+  --progress-track: rgba(22, 25, 15, 0.16);
+  --progress-fill: #0d4f42;
+
+  /* CANAL AÇÃO — neutro. Primária ganha por PESO, não por reusar a lima. */
+  --action-fill: #16190f;
+  --action-text: #ffffff;
+  --action-ghost-text: var(--text-primary);
+  --action-ghost-border: var(--border-strong);
+
+  /* Matriz de escopo (§4.1) — cor é reforço, glifo é o portador */
+  --cell-live: var(--state-live);
+  --cell-error: #e2624b;
+  --cell-scheduled: transparent;
+  --cell-out: transparent;
+
+  /* Estrutura */
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow-popover: 0 12px 32px -8px rgba(22, 25, 15, 0.28), 0 2px 6px rgba(22, 25, 15, 0.12);
+
+  /* Alvo mínimo de toque (§6) */
+  --touch-target: 44px;
+
+  /* Motion (§5) — um token por linha da tabela de timings */
+  --ease-emphasis: cubic-bezier(0.2, 0, 0, 1);
+  --dur-block-hover: 120ms;
+  --dur-popover-in: 180ms;
+  --dur-popover-out: 120ms;
+  --dur-section: 200ms;
+  --dur-progress: 500ms;
+  --dur-anchor-swap: 180ms;
+  --dur-press: 100ms;
+  --dur-pulse: 300ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --surface-0: #14170f;
+    --surface-1: #1b1f16;
+    --surface-2: #262b1f;
+
+    --text-primary: #f2f4ec;
+    --text-secondary: #c3c9b8; /* 9.7:1 sobre surface-0 */
+    --text-muted: #a2a996; /* 6.4:1 sobre surface-0 */
+    --text-on-live: #1a2000;
+
+    --border: #3a4030;
+    --border-strong: #5e6650;
+    --border-danger: #e2624b;
+    --border-focus: #7aa7f5;
+
+    --bg-danger: #3a1a14;
+    --text-danger: #f4a494;
+    --bg-accent: #16243c;
+    --text-accent: #a8c6f7;
+
+    --state-live: #c3e021;
+    --state-live-edge: #d7f04e;
+    --state-ended-fill: #22261b;
+
+    --progress-track: rgba(242, 244, 236, 0.18);
+    --progress-fill: #3fd6b0;
+
+    --action-fill: #f2f4ec;
+    --action-text: #14170f;
+    --action-ghost-text: var(--text-primary);
+    --action-ghost-border: var(--border-strong);
+
+    --cell-error: #e2624b;
+
+    --shadow-popover: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface-0: #14170f;
+  --surface-1: #1b1f16;
+  --surface-2: #262b1f;
+
+  --text-primary: #f2f4ec;
+  --text-secondary: #c3c9b8;
+  --text-muted: #a2a996;
+  --text-on-live: #1a2000;
+
+  --border: #3a4030;
+  --border-strong: #5e6650;
+  --border-danger: #e2624b;
+  --border-focus: #7aa7f5;
+
+  --bg-danger: #3a1a14;
+  --text-danger: #f4a494;
+  --bg-accent: #16243c;
+  --text-accent: #a8c6f7;
+
+  --state-live: #c3e021;
+  --state-live-edge: #d7f04e;
+  --state-ended-fill: #22261b;
+
+  --progress-track: rgba(242, 244, 236, 0.18);
+  --progress-fill: #3fd6b0;
+
+  --action-fill: #f2f4ec;
+  --action-text: #14170f;
+
+  --cell-error: #e2624b;
+
+  --shadow-popover: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* §5 — prefers-reduced-motion: zerar transform/opacity.
+ * Estado ainda muda; só o movimento some. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-block-hover: 0ms;
+    --dur-popover-in: 0ms;
+    --dur-popover-out: 0ms;
+    --dur-section: 0ms;
+    --dur-progress: 0ms;
+    --dur-anchor-swap: 0ms;
+    --dur-press: 0ms;
+    --dur-pulse: 0ms;
+  }
+}

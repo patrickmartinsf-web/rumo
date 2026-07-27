@@ -1,0 +1,617 @@
+/* ==========================================================================
+   POPOVER ANCORADO (§4) + MATRIZ DE ESCOPO (§4.1) + MENU
+   ========================================================================== */
+
+.pop {
+  position: fixed;
+  z-index: 60;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  /* O painel nunca pode empurrar o rodapé de ação pra fora da tela: quando
+     não cabe, ele rola por dentro (ver .pop__body). A rolagem fica no filho
+     porque a setinha vive FORA da caixa e um overflow aqui a decapitaria. */
+  max-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+  color: var(--text-primary);
+  /* §5, popover entrada: 180ms, opacity 0→1, translateY -6→0, scale .985→1 */
+  animation: pop-in var(--dur-popover-in) var(--ease-emphasis) both;
+}
+
+.pop:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pop[data-placement='top'] {
+  animation-name: pop-in-top;
+}
+
+@keyframes pop-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* §5: "foco por teclado → abre instantâneo, sem animação de posição".
+   Some com o movimento, mantém o fade — o painel não pode "voar" enquanto o
+   usuário navega de bloco em bloco com as setas. */
+.pop[data-instant] {
+  animation: pop-fade var(--dur-popover-in) var(--ease-emphasis) both;
+}
+
+@keyframes pop-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pop[data-pinned] {
+  border-color: var(--border-strong);
+}
+
+.pop__body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius-lg);
+}
+
+.pop__arrow {
+  position: absolute;
+  left: var(--arrow-offset);
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+
+.pop[data-placement='bottom'] .pop__arrow {
+  top: -6px;
+  border-inline-end: none;
+  border-block-end: none;
+}
+
+.pop[data-placement='top'] .pop__arrow {
+  bottom: -6px;
+  border-inline-start: none;
+  border-block-start: none;
+}
+
+/* --------------------------------------------------------------------------
+   Stagger das seções — §5: 200ms ease-out, delays 40/70/100/130/160ms
+   -------------------------------------------------------------------------- */
+
+.pop__header,
+.pop__erro,
+.pop__sec,
+.pop__footer {
+  animation: sec-in var(--dur-section) ease-out both;
+}
+
+@keyframes sec-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pop__header {
+  animation-delay: 40ms;
+}
+.pop__erro {
+  animation-delay: 55ms;
+}
+.pop__sec[data-region='extensao'] {
+  animation-delay: 70ms;
+}
+.pop__sec[data-region='escopo'] {
+  animation-delay: 100ms;
+}
+.pop__sec[data-region='adornos'] {
+  animation-delay: 130ms;
+}
+.pop__footer {
+  animation-delay: 160ms;
+}
+
+/* §5, dado ao vivo: pulso de 300ms na borda da região que mudou — e só nela.
+   Nunca re-entrada do painel inteiro durante a leitura. */
+[data-pulse] {
+  animation: region-pulse var(--dur-pulse) ease-out;
+}
+
+@keyframes region-pulse {
+  from {
+    box-shadow: inset 0 0 0 2px var(--progress-fill);
+  }
+  to {
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1. Cabeçalho
+   -------------------------------------------------------------------------- */
+
+.pop__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pop__tipo {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.pop__ident {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pop__titulo {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.pop__sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+
+.pop__id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.pop__badge {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* O badge repete o tratamento do container (§2) — o estado tem UM dono
+   visual, e ele é consistente entre bloco e popover. */
+.pop__badge[data-state='no-ar'] {
+  background: var(--state-live);
+  border-color: var(--state-live-edge);
+  color: var(--text-on-live);
+}
+
+.pop__badge[data-state='erro'] {
+  background: var(--bg-danger);
+  border-color: var(--border-danger);
+  color: var(--text-danger);
+}
+
+.pop__badge[data-state='rascunho'] {
+  border-style: dashed;
+}
+
+.pop__erro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--bg-danger);
+  color: var(--text-danger);
+  font-size: 12.5px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+/* --------------------------------------------------------------------------
+   Seções
+   -------------------------------------------------------------------------- */
+
+.pop__sec {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pop__sec-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.pop__sec-count {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.pop__janela {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.pop__meta {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pop__progresso {
+  margin-top: 10px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--progress-track);
+  overflow: hidden;
+}
+
+.pop__progresso-fill {
+  display: block;
+  height: 100%;
+  background: var(--progress-fill);
+  transition: width var(--dur-progress) var(--ease-emphasis) 120ms;
+}
+
+.pop__linhas {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.pop__linhas li {
+  padding-inline-start: 10px;
+  border-inline-start: 2px solid var(--border-strong);
+}
+
+.pop__linhas li[data-relation='durante'] {
+  border-inline-start-color: var(--progress-fill);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.pop__linhas li[data-fit^='estouro'] {
+  border-inline-start-color: var(--border-danger);
+  color: var(--text-danger);
+  font-weight: 600;
+}
+
+.pop__vazio {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---- 4. Sinais ---------------------------------------------------------- */
+
+.pop__sinais {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.pop__sinal {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.pop__sinal-glifo {
+  display: inline-flex;
+  margin-top: 1px;
+  color: var(--text-secondary);
+}
+
+.pop__sinal[data-kind='alerta'] .pop__sinal-glifo {
+  color: var(--text-danger);
+}
+
+.pop__sinal-texto {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* ---- 5. Rodapé de ação -------------------------------------------------- */
+
+.pop__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+
+.pop__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  /* §6: touch target ≥44px. Aqui o botão TEM tamanho real, sem truque. */
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: 0 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--action-ghost-text);
+  background: var(--surface-0);
+  border: 1px solid var(--action-ghost-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition:
+    background var(--dur-block-hover) var(--ease-emphasis),
+    transform var(--dur-press) ease-out;
+}
+
+/* §4: "ação-que-executa fica sólida". Primária ganha por PESO (§2), não por
+   reusar a lima do canal de estado. */
+.pop__btn--primary[data-behavior='execute'] {
+  background: var(--action-fill);
+  border-color: var(--action-fill);
+  color: var(--action-text);
+}
+
+/* Primária que NAVEGA não é sólida: ela sai do popover (drawer), e sólido
+   comunicaria execução. Fica com peso alto e a seta. */
+.pop__btn--primary[data-behavior='navigate'] {
+  border-color: var(--action-fill);
+  border-width: 2px;
+}
+
+.pop__btn--icon {
+  padding: 0;
+  width: var(--touch-target);
+  border-color: transparent;
+  background: transparent;
+}
+
+.pop__btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text-primary) 8%, var(--surface-0));
+}
+
+.pop__btn--primary[data-behavior='execute']:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--action-fill) 88%, var(--surface-0));
+}
+
+.pop__btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.pop__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pop__btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.pop__close {
+  flex: 0 0 auto;
+  margin: -8px -6px 0 0;
+  color: var(--text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Menu de overflow (`...`)
+   -------------------------------------------------------------------------- */
+
+.menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.menu__list {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  padding: 4px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-popover);
+  display: grid;
+  gap: 2px;
+  z-index: 1;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: var(--touch-target);
+  padding: 0 10px;
+  font: inherit;
+  font-size: 13px;
+  text-align: start;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+}
+
+.menu__item:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.menu__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.menu__item:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+/* --------------------------------------------------------------------------
+   §4.1 — Matriz de escopo
+   -------------------------------------------------------------------------- */
+
+.scope__table {
+  border-collapse: separate;
+  border-spacing: 3px;
+  margin: -3px;
+}
+
+.scope__col-head,
+.scope__row-head {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.scope__col-head {
+  text-align: center;
+  padding-bottom: 2px;
+}
+
+.scope__row-head {
+  text-align: end;
+  padding-inline-end: 4px;
+}
+
+.scope__cell-wrap {
+  padding: 0;
+}
+
+/* §4.1: "Célula ≥ 14px (era 11px — abaixo do piso)."
+   20px dá folga para o glifo de 12px respirar sem virar um alvo minúsculo. */
+.scope__cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.scope__cell[data-cell='no-ar'] {
+  background: var(--cell-live);
+  border-color: var(--state-live-edge);
+  color: var(--text-on-live);
+}
+
+.scope__cell[data-cell='erro'] {
+  background: var(--cell-error);
+  border-color: var(--border-danger);
+  color: var(--surface-0);
+}
+
+.scope__cell[data-cell='agendada'] {
+  background: var(--cell-scheduled);
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+
+.scope__cell[data-cell='fora-do-escopo'] {
+  background: var(--cell-out);
+  border-color: var(--border);
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.scope__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.scope__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scope__cell--legend {
+  width: 16px;
+  height: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop,
+  .pop__header,
+  .pop__erro,
+  .pop__sec,
+  .pop__footer {
+    animation: none;
+  }
+
+  .pop__btn:active:not(:disabled) {
+    transform: none;
+  }
+}
