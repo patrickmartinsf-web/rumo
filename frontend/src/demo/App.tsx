@@ -17,6 +17,13 @@ interface LogEntry {
   text: string;
 }
 
+/** Respeita quem já definiu o tema (host) e, na falta, o sistema. */
+function initialTheme(): 'light' | 'dark' {
+  const preset = document.documentElement.dataset['theme'];
+  if (preset === 'dark' || preset === 'light') return preset;
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 export function App() {
   const now = useNow(1000);
   const [base] = useState(() => Date.now());
@@ -24,12 +31,29 @@ export function App() {
 
   const [items, setItems] = useState<Interactivity[]>(demo.items);
   const [live, setLive] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
   const [log, setLog] = useState<LogEntry[]>([]);
 
   useEffect(() => {
     document.documentElement.dataset['theme'] = theme;
   }, [theme]);
+
+  /**
+   * O tema também pode ser trocado de fora (host que carimba `data-theme` na
+   * raiz). Sem observar isso, o botão daqui e o de lá brigariam: um escreveria
+   * o atributo e o outro sobrescreveria no próximo render.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      const external = root.dataset['theme'];
+      if (external === 'dark' || external === 'light') {
+        setTheme((current) => (current === external ? current : external));
+      }
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
 
   /**
    * §5, "Dado ao vivo": o bloco no ar muda sozinho. Aqui uma praça cai e volta
